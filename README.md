@@ -1,4 +1,4 @@
-# 無題のゲーム
+# リズムカラテ
 
 ▶ 遊ぶ: https://gcn-play.com/play/hq1c9mqx0wao
 （このゲームが公開されていない間、上の URL は開けません）

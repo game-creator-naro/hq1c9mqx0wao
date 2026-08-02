@@ -1,16 +1,16 @@
 {
   "schema": 1,
   "gameId": "hq1c9mqx0wao",
-  "title": "無題のゲーム",
+  "title": "リズムカラテ",
   "versionId": "31b807f8-68e0-407d-b58d-7fd3430d5b48",
-  "snapshotAt": "2026-08-02T04:13:28.184Z",
+  "snapshotAt": "2026-08-02T04:16:59.355Z",
   "playUrl": "https://gcn-play.com/play/hq1c9mqx0wao",
   "files": [
     {
       "path": "README.md",
       "mime": "text/markdown; charset=utf-8",
       "bytes": 1868,
-      "sha256": "694ee20c9a03b20bd12187a0a5ac89ae3e357b5d6b54044b5c18c704f45a9936"
+      "sha256": "ee3c15f978f5bad98fae7fed64588588cce22c0b0168fcedb943583c725f3db8"
     },
     {
       "path": "index.html",
