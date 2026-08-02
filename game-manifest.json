@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "gameId": "hq1c9mqx0wao",
+  "title": "リズムカラテ",
+  "versionId": "31b807f8-68e0-407d-b58d-7fd3430d5b48",
+  "snapshotAt": "2026-08-02T04:16:59.355Z",
+  "playUrl": "https://gcn-play.com/play/hq1c9mqx0wao",
+  "files": [
+    {
+      "path": "README.md",
+      "mime": "text/markdown; charset=utf-8",
+      "bytes": 1868,
+      "sha256": "ee3c15f978f5bad98fae7fed64588588cce22c0b0168fcedb943583c725f3db8"
+    },
+    {
+      "path": "index.html",
+      "mime": "text/html; charset=utf-8",
+      "bytes": 749693,
+      "sha256": "f3c6e330b27bf49f4e2064dc306d76263d55ec0e9929cf555ef17c7e19c4b3b5"
+    },
+    {
+      "path": "assets/images/bg_main.webp",
+      "mime": "image/webp",
+      "bytes": 133622,
+      "sha256": "1b587b4aaba8b9c8be1486ee6fefca25770c22b0b6ec8b03e218d4b565c585b3"
+    },
+    {
+      "path": "assets/images/player.png",
+      "mime": "image/png",
+      "bytes": 161336,
+      "sha256": "37a486b35b28eee9184f3f179b33ae84c9ca0b78b5944598f1aef4370ff8bb1d"
+    },
+    {
+      "path": "assets/images/pot.png",
+      "mime": "image/png",
+      "bytes": 165229,
+      "sha256": "2ce828c2cdd76f1df03e16945a85f0d3376e325764bb346ee20a6232fd678723"
+    },
+    {
+      "path": "assets/sfx/vo_finish.mp3",
+      "mime": "audio/mpeg",
+      "bytes": 19638,
+      "sha256": "27bb6eb763b01f02b04c9fb6b4355918eab5f62f3d0593b2d4af687f16b429c4"
+    },
+    {
+      "path": "assets/sfx/vo_start.mp3",
+      "mime": "audio/mpeg",
+      "bytes": 49043,
+      "sha256": "4935f95c6302780a90bb8230fc3acd0d64582adb6a5fc827449187e13346767b"
+    }
+  ],
+  "skipped": []
+}
