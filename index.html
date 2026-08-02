@@ -94,10 +94,10 @@
    * インラインスクリプトの例外では filename に文書 URL がそのまま入り、
    * 同一オリジンの外部スクリプト（/a/<versionId>/…）ではその URL が入る。どちらも許可する。
    *
-   * filename が空文字 / undefined のケースは**自分由来ではない**と扱う:
-   * これはクロスオリジンのスクリプトで詳細が取れないとき（message が "Script error."）の形であり、
-   * ゲーム HTML は CSP と静的検査により同一 UGC オリジンの素材しか参照できない以上、
-   * 「自分のコードなのに filename が空」は構造上あり得ない。
+   * filename が空文字 / undefined のケースは**自分由来と確認できない**ため false に倒す。
+   * opaque-origin sandbox の WebKit では、自文書の inline 例外も filename="" / "Script error." /
+   * 空 stack に匿名化され得るが、拡張等との区別が付かない。親はこの厳密な形だけを
+   * opaque-unattributed として観測し、自動修正には使わない（D-058）。
    */
   function isOwnSourceUrl(url) {
     if (typeof url !== "string" || url === "") {
@@ -487,15 +487,16 @@ var RANKCOL={S:"#fab005",A:"#fa5252",B:"#339af0",C:"#adb5bd"};
 
 if(GCNOK){GCN.onInit=function(s){try{if(s&&typeof s.best==="number")best=s.best;}catch(e){}};}
 
+// ---- 時計：Date.now ベースの現実時計。絶対時刻から毎フレーム計算するのでFPSに左右されない ----
 function nowT(){return Date.now()/1000;}
 function hitX(){return W*0.34;}
 function potY(){return H*0.56;}
 function potR(){return Math.min(Math.max(Math.min(W,H)*0.075,20),30);}
-function charS(){return Math.min(Math.max(Math.min(W,H)*0.32,90),180);}
+function charS(){return Math.min(Math.max(Math.min(W,H)*0.3,80),170);}
 function popY(){return potY()-potR()-Math.min(H*0.14,80);}
 function easeOutBack(k){var c=1.70158;return 1+(c+1)*Math.pow(k-1,3)+c*Math.pow(k-1,2);}
 
-// ================= 音声（すべて失敗してもよい。ゲーム進行とは完全分離） =================
+// ================= 音声（すべて fail-open。失敗してもゲーム進行に影響しない） =================
 function audioUp(){return !!(ac&&ac.state==="running");}
 function initAudio(){
 if(ac||!AC)return;
@@ -552,7 +553,7 @@ var o=ac.createOscillator(),g=ac.createGain();o.type="sine";
 o.frequency.setValueAtTime(420,t);o.frequency.exponentialRampToValueAtTime(240,t+0.16);
 env(g,t,0.004,0.1,0.18);o.connect(g);g.connect(master);o.start(t);o.stop(t+0.25);}catch(e){}}
 
-// ---- スケジューラ（画面時計=Date.nowを主軸。音は後追い予約なので鳴らせない環境でも止まらない）----
+// ---- スケジューラ（画面時計=Date.nowが主軸。音は後追い予約なので鳴らせない環境でも止まらない）----
 function schedule(){
 if(!ac||state!=="play")return;
 if(ac.state==="suspended"){try{ac.resume();}catch(e){}}
@@ -643,22 +644,30 @@ combo=0;punchT=0;
 pops.push({txt:"スカッ…",col:"#ced4da",age:0,x:hitX(),y:popY(),big:false});
 whiffSfx();}}
 
-// ---- 入力：まずゲーム進行を実行し、音声の準備はその後に try で囲んで行う ----
-function onTap(e){
+// ---- 入力：pointerdown / touchstart / click を同時登録し、物理1タップの重複は時間窓で排除 ----
+var lastDownMs=0;
+function onTapAny(e){
 if(e&&e.preventDefault)e.preventDefault();
-if(state==="title"){startGame();}
-else if(state==="play"){tapPlay();}
-else if(state==="result"){if(resultAge>0.7)startGame();}
+var ms=Date.now(),isClick=false;
+if(e&&e.type==="click")isClick=true;
+if(isClick){if(ms-lastDownMs<500)return;}
+else{if(ms-lastDownMs<50)return;lastDownMs=ms;}
 var rx=W/2,ry=H/2;
 if(e){if(typeof e.clientX==="number"){rx=e.clientX;ry=e.clientY;}
 else if(e.touches&&e.touches[0]){rx=e.touches[0].clientX;ry=e.touches[0].clientY;}}
+// 1) まずゲーム状態を更新（音声の成否に一切依存しない）
+if(state==="title"){startGame();}
+else if(state==="play"){tapPlay();}
+else if(state==="result"){if(resultAge>0.7)startGame();}
+// 2) タップの視覚フィードバック
 tapRipple(rx,ry);
+// 3) 音声の準備は最後。fail-open（失敗してもゲームは動き続ける）
 try{initAudio();}catch(err){ac=null;master=null;noiseBuf=null;}
 try{unlockAudio();}catch(err){}
 }
-if(window.PointerEvent){window.addEventListener("pointerdown",onTap,{passive:false});}
-else if("ontouchstart" in window){window.addEventListener("touchstart",onTap,{passive:false});}
-else{window.addEventListener("mousedown",onTap);}
+window.addEventListener("pointerdown",onTapAny,{passive:false});
+window.addEventListener("touchstart",onTapAny,{passive:false});
+window.addEventListener("click",onTapAny);
 
 // ================= 描画 =================
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);
@@ -717,15 +726,15 @@ ctx.fillStyle="#e03131";ctx.fillRect(-s*0.26,s*0.17,s*0.52,s*0.07);}
 ctx.restore();}
 function drawStage(now,beatPos,dt){
 var hx=hitX(),py=potY(),pr=potR(),i;
-ctx.fillStyle="rgba(0,0,0,0.22)";ctx.fillRect(0,py-pr-16,W,pr*2+32);
-ctx.strokeStyle="rgba(255,255,255,0.45)";ctx.lineWidth=5;ctx.setLineDash([16,12]);
+ctx.fillStyle="rgba(0,0,0,0.3)";ctx.fillRect(0,py-pr-20,W,pr*2+40);
+ctx.strokeStyle="rgba(255,255,255,0.6)";ctx.lineWidth=5;ctx.setLineDash([18,12]);
 ctx.beginPath();ctx.moveTo(hx-10,py);ctx.lineTo(W+20,py);ctx.stroke();ctx.setLineDash([]);
 var ph=beatPos>0?beatPos-Math.floor(beatPos):0.999;
-ctx.fillStyle="rgba(255,255,255,0.10)";
+ctx.fillStyle="rgba(255,255,255,0.12)";
 ctx.beginPath();ctx.arc(hx,py,pr+4,0,6.283);ctx.fill();
 ctx.strokeStyle="rgba(255,255,255,"+(0.7*(1-ph)).toFixed(3)+")";ctx.lineWidth=6;
 ctx.beginPath();ctx.arc(hx,py,pr+4+ph*24,0,6.283);ctx.stroke();
-ctx.strokeStyle="rgba(255,255,255,0.75)";ctx.lineWidth=3;
+ctx.strokeStyle="rgba(255,255,255,0.85)";ctx.lineWidth=3;
 ctx.beginPath();ctx.arc(hx,py,pr+4,0,6.283);ctx.stroke();
 for(i=0;i<notes.length;i++){var n=notes[i];
 if(n.st===0){
@@ -740,7 +749,7 @@ if(x<W+80)drawPot(x,py,pr,n.rot+dt2*3,1);
 var dt3=now-n.mt;
 if(dt3<0.85)drawPot(hx-dt3*160,py+dt3*dt3*1500,pr,n.rot+dt3*9,1-dt3/0.85);}}
 var s=charS();
-var cx=Math.max(hx-s*0.55-26,s*0.55),cy=py+s*0.26;
+var cx=Math.max(hx-s*0.5-pr-18,s*0.52),cy=py+s*0.26;
 ctx.fillStyle="rgba(0,0,0,0.24)";
 ctx.beginPath();ctx.ellipse(cx,cy+s*0.34,s*0.36,s*0.09,0,0,6.283);ctx.fill();
 var jump=beatPos>0?Math.sin(ph*Math.PI)*Math.min(10,H*0.02):0;
