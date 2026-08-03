@@ -460,6 +460,7 @@ var charImg=loadImg("player"),potImg=loadImg("pot"),bgImg=loadImg("bg_main");
 function playVoice(id){var u=asset("sfx",id);if(!u)return;
 try{var a=new Audio(u);var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});}catch(e){}}
 
+// ---- 楽曲データ ----
 var BPM=118,BEAT=60/BPM,HALF=BEAT/2;
 var CI=4,BARS=14,SONG_BEATS=CI+BARS*4+4;
 var LEAD=1.9,PERF=0.065,GOODWIN=0.14;
@@ -476,6 +477,7 @@ var MEL=[
 [7,null,5,null,4,null,5,null],[4,null,2,4,null,2,null,0],
 [2,null,4,null,5,null,4,2],[0,null,null,null,7,null,5,null]];
 
+// ---- 状態 ----
 var state="title",score=0,best=0,combo=0,maxCombo=0,lastComboAt=-9;
 var counts={p:0,g:0,m:0};
 var notes=[],parts=[],pops=[],impacts=[];

@@ -2,8 +2,8 @@
   "schema": 1,
   "gameId": "hq1c9mqx0wao",
   "title": "リズムカラテ",
-  "versionId": "af989bca-9d2b-4e62-84c8-411526883e06",
-  "snapshotAt": "2026-08-02T14:27:38.964Z",
+  "versionId": "b69990d2-8c40-46db-ac05-dd6731fed6da",
+  "snapshotAt": "2026-08-03T16:08:52.675Z",
   "playUrl": "https://gcn-play.com/play/hq1c9mqx0wao",
   "files": [
     {
@@ -15,8 +15,8 @@
     {
       "path": "index.html",
       "mime": "text/html; charset=utf-8",
-      "bytes": 753828,
-      "sha256": "ee99e69e6595e84a86c1792eeb4fae3178594a0fe24dda62efdeaac8e608d486"
+      "bytes": 753877,
+      "sha256": "f45b253649703f29f97daf80685988ea6d61fffa368bf802d49825ed67236123"
     },
     {
       "path": "assets/images/bg_main.webp",
