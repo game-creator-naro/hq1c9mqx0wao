@@ -437,7 +437,7 @@
 <style>
 *{margin:0;padding:0}
 html,body{height:100%;background:#2b0f3a;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
-#c{display:block;width:100%;height:100%}
+#c{display:block;width:100%;height:100%;touch-action:none}
 </style>
 </head>
 <body>
@@ -489,7 +489,7 @@ var RANKCOL={S:"#fab005",A:"#fa5252",B:"#339af0",C:"#adb5bd"};
 
 if(GCNOK){GCN.onInit=function(s){try{if(s&&typeof s.best==="number")best=s.best;}catch(e){}};}
 
-// ---- 時計：Date.now ベースの現実時計。絶対時刻から毎フレーム計算するのでFPSに左右されない ----
+// ---- 時計：Date.now ベース。絶対時刻から毎フレーム計算するのでFPSに左右されない ----
 function nowT(){return Date.now()/1000;}
 function hitX(){return W*0.34;}
 function potY(){return H*0.56;}
@@ -511,7 +511,7 @@ var len=a.sampleRate|0;
 var nb=a.createBuffer(1,len,a.sampleRate);
 var d=nb.getChannelData(0);
 for(var i=0;i<len;i++)d[i]=Math.random()*2-1;
-master=m;noiseBuf=nb;ac=a;
+master=m;noiseBuf=nb;ac=a;   // 全部成功したときだけ有効化する
 }catch(e){ac=null;master=null;noiseBuf=null;}}
 function unlockAudio(){
 if(!ac)return;
